@@ -8,7 +8,7 @@ app_publisher = "libracore AG"
 app_description = "Nothing ERPNext Application"
 app_icon = "octicon octicon-file-directory"
 app_color = "grey"
-app_email = "ben.helmy@libracore.com"
+app_email = "info@libracore.com"
 app_license = "MIT"
 
 # Includes in <head>
