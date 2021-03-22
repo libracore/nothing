@@ -8,13 +8,16 @@
   "naming_series",
   "customer",
   "customer_name",
+  "cust_contact_person",
   "item",
   "item_name",
+  "peers",
   "description",
   "column_break_5",
   "start_date",
   "expiration_date",
   "billing_intervall",
+  "responsible",
   "disabled"
  ],
  "fields": [
@@ -45,8 +48,7 @@
    "fetch_from": "item.description",
    "fieldname": "description",
    "fieldtype": "Small Text",
-   "label": "Description",
-   "read_only": 1
+   "label": "Description"
   },
   {
    "fieldname": "column_break_5",
@@ -83,9 +85,26 @@
    "fieldname": "disabled",
    "fieldtype": "Check",
    "label": "Disabled"
+  },
+  {
+   "fieldname": "peers",
+   "fieldtype": "Data",
+   "label": "Nr. Peers x billing months"
+  },
+  {
+   "fieldname": "responsible",
+   "fieldtype": "Link",
+   "label": "Responsible/Project Manager",
+   "options": "User"
+  },
+  {
+   "fieldname": "cust_contact_person",
+   "fieldtype": "Link",
+   "label": "Customer's Contact Person",
+   "options": "Contact"
   }
  ],
- "modified": "2021-03-09 15:18:42.534438",
+ "modified": "2021-03-18 14:15:06.468159",
  "modified_by": "Administrator",
  "module": "nothing",
  "name": "Licences",
