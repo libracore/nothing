@@ -15,7 +15,7 @@ def get_data():
                        "color": "#f88c00",
                        "icon": "octicon octicon-person",
                        "description": _("Licences")                 
-                   },
+                   }
             ]
 		}
 	]
