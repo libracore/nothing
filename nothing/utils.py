@@ -4,20 +4,45 @@
 
 from __future__ import unicode_literals
 import frappe
-from frappe.utils.data import nowdate, add_days, add_months, add_years
+from frappe import _
+from frappe.utils.data import nowdate, add_days, add_months, add_years, getdate, add_to_date, get_datetime
 
 @frappe.whitelist()
-def create_task(project, task_type, description, item_name):
+def create_task(project, task_type, description, item_name, expected_time, exp_start_date, exp_end_date, completed_by):
 	task = frappe.get_doc({
 		"doctype": "Task",
 		"project": project,
 		"type": task_type,
 		"description": description,
+		"expected_time": expected_time,
+		"exp_start_date": exp_start_date,
+		"exp_end_date": exp_end_date,
+		"completed_by": completed_by,
 		"subject": item_name
 	})
 	task.insert()
 	
 	return task.name
+	
+@frappe.whitelist()
+def create_tasks_from_so(so):
+	so = frappe.get_doc("Sales Order", so)
+	project = frappe.db.sql("""SELECT `name` FROM `tabProject` WHERE `sales_order` = '{so}'""".format(so=so.name), as_dict=True)[0].name
+
+	for item in so.items:
+		task = frappe.get_doc({
+			"doctype": "Task",
+			"project": project,
+			"expected_time": item.qty,
+			"subject": item.item_name
+		})
+		task.insert()
+		
+		item_master = frappe.get_doc("Item", item.item_code)
+		item_master.task = task.name
+		item_master.save()
+		
+	return
 
 @frappe.whitelist()
 def licence_invoice_run(single_run=False):
@@ -68,6 +93,20 @@ def licence_invoice_run(single_run=False):
 				}
 				
 def create_licences_invoice(licence):
+	items = []
+	
+	for item in licence.items:
+		_item = {
+				'item_code': item.item_code,
+				'qty': item.qty,
+				'uom': item.stock_uom,
+				'rate': item.rate,
+				'licences': licence.name,
+				'description': item.description,
+				'income_account': '3005 - Dienstleistungsertrag Export - P' if licence.taxes_and_charges == 'Steuerfrei Export (220) - P' else '3000 - Dienstleistungsertrag - P'
+			}
+		items.append(_item)
+	
 	sinv = frappe.get_doc({
 		"doctype": "Sales Invoice",
 		"customer": licence.customer,
@@ -75,14 +114,103 @@ def create_licences_invoice(licence):
 		'serviceperiod_to_date': licence.expiration_date,
 		'responsible': licence.responsible,
 		'contact_person': licence.cust_contact_person,
-		"items": [
-			{
-				'item_code': licence.item,
-				'qty': licence.peers,
-				'licences': licence.name,
-				'description': licence.description
-			}
-		]
+		'po_no': licence.cust_po_nr,
+		'company': licence.company,
+		'taxes_and_charges': licence.taxes_and_charges,
+		"items": items
 	})
 	sinv.insert()
 	return sinv.name
+
+@frappe.whitelist()
+def create_timesheet_entry(task, date, activity_type, hours):
+	task = frappe.get_doc("Task", task)
+	employee = frappe.db.sql("""SELECT `name` FROM `tabEmployee` WHERE `user_id` = '{user}' AND `status` = 'Active'""".format(user=frappe.session.user), as_dict=True)
+	try:
+		employee = employee[0].name
+	except:
+		frappe.throw(_("No employee found"))
+		
+	existing_ts = frappe.db.sql("""SELECT `name`, `docstatus` FROM `tabTimesheet`
+									WHERE `employee` = '{employee}'
+									AND `start_date` = '{date}'
+									AND `docstatus` != 2""".format(employee=employee, date=date), as_dict=True)
+	
+	if len(existing_ts) > 0:
+		if existing_ts[0].docstatus != 0:
+			frappe.throw(_("Timesheet already submitted for this date, please cancell and amend"))
+		# add to existing timesheet
+		timesheet = frappe.get_doc("Timesheet", existing_ts[0].name)
+		latest_entry = frappe.db.sql("""SELECT `to_time` FROM `tabTimesheet Detail` WHERE `parent` = '{parent}' ORDER BY `to_time` DESC""".format(parent=timesheet.name), as_dict=True)
+		latest_datetime = latest_entry[0].to_time
+		row = timesheet.append("time_logs", {})
+		row.activity_type = activity_type
+		row.from_time = latest_datetime
+		row.to_time = get_datetime(add_to_date(latest_datetime, hours=float(hours)))
+		row.hours = float(hours)
+		row.task = task.name
+		row.project = task.project
+		row.billable = 1
+		row.billing_hours = float(hours)
+		timesheet.save()
+		return timesheet.name
+	else:
+		# create new timesheet
+		timesheet = frappe.get_doc({
+			"doctype": "Timesheet",
+			"company": task.company,
+			"employee": employee,
+			"start_date": date,
+			"end_date": date,
+			"time_logs": [
+				{
+					"activity_type": activity_type,
+					"from_time": date + " 06:00:00",
+					"to_time": get_datetime(add_to_date(date + " 06:00:00", hours=float(hours))),
+					"hours": float(hours),
+					'task': task.name,
+					'project': task.project,
+					'billable': 1,
+					'billing_hours': float(hours)
+				}
+			],
+		})
+		timesheet.insert()
+		return timesheet.name
+
+@frappe.whitelist()
+def get_item_rate(licence, item_code):
+	licence = frappe.get_doc("Licences", licence)
+	currency = licence.default_currency
+	
+	rates = frappe.db.sql("""SELECT `price_list_rate` FROM `tabItem Price` WHERE
+							`currency` = '{currency}'
+							AND `item_code` = '{item_code}'
+							AND `selling` = 1
+							ORDER BY `modified` DESC LIMIT 1""".format(currency=currency, item_code=item_code), as_list=True)
+	if len(rates) > 0:
+		rate = rates[0][0]
+		return rate
+	else:
+		return '0.00'
+
+@frappe.whitelist()
+def get_timelogs_of_task_items(sinv):
+	data = {}
+	sinv = frappe.get_doc("Sales Invoice", sinv)
+	for _item in sinv.items:
+		item = frappe.get_doc("Item", _item.item_code)
+		data[item.item_code] = {
+			'qty': 0,
+			'rate': 0
+		}
+		
+		time_logs = frappe.db.sql("""SELECT SUM(`billing_amount`) AS `billing_amount`, SUM(`hours`) AS `hours` FROM `tabTimesheet Detail`
+										WHERE `task` = '{task}' AND `docstatus` != 2""".format(task=item.task), as_dict=True)
+		
+		if len(time_logs) > 0:
+			#frappe.throw(str(time_logs))
+			if time_logs[0].hours:
+				data[item.item_code]["qty"] = time_logs[0].hours
+				data[item.item_code]["rate"] = time_logs[0].billing_amount / time_logs[0].hours
+	return data

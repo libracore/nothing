@@ -9,16 +9,19 @@
   "customer",
   "customer_name",
   "cust_contact_person",
-  "item",
-  "item_name",
-  "peers",
-  "description",
+  "cust_po_nr",
+  "taxes_and_charges",
+  "default_currency",
+  "responsible",
   "column_break_5",
   "start_date",
+  "next_billing_date",
   "expiration_date",
   "billing_intervall",
-  "responsible",
-  "disabled"
+  "disabled",
+  "company",
+  "section_break_16",
+  "items"
  ],
  "fields": [
   {
@@ -28,27 +31,16 @@
    "options": "Customer"
   },
   {
-   "fieldname": "item",
-   "fieldtype": "Link",
-   "label": "Item",
-   "options": "Item"
-  },
-  {
    "fieldname": "expiration_date",
    "fieldtype": "Date",
    "label": "Expiration Date"
   },
   {
+   "default": "yearly",
    "fieldname": "billing_intervall",
    "fieldtype": "Select",
    "label": "Billing Intervall",
    "options": "monthly\nyearly"
-  },
-  {
-   "fetch_from": "item.description",
-   "fieldname": "description",
-   "fieldtype": "Small Text",
-   "label": "Description"
   },
   {
    "fieldname": "column_break_5",
@@ -61,12 +53,6 @@
    "label": "Series",
    "options": "L-.#####",
    "reqd": 1
-  },
-  {
-   "fetch_from": "item.item_name",
-   "fieldname": "item_name",
-   "fieldtype": "Data",
-   "label": "Item Name"
   },
   {
    "fetch_from": "customer.customer_name",
@@ -87,9 +73,10 @@
    "label": "Disabled"
   },
   {
-   "fieldname": "peers",
-   "fieldtype": "Data",
-   "label": "Nr. Peers x billing months"
+   "fieldname": "cust_contact_person",
+   "fieldtype": "Link",
+   "label": "Customers Contact Person",
+   "options": "Contact"
   },
   {
    "fieldname": "responsible",
@@ -98,14 +85,52 @@
    "options": "User"
   },
   {
-   "fieldname": "cust_contact_person",
+   "default": "Peerdom",
+   "fieldname": "company",
    "fieldtype": "Link",
-   "label": "Customer's Contact Person",
-   "options": "Contact"
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "cust_po_nr",
+   "fieldtype": "Data",
+   "label": "Customers PO Nr."
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "Licences Invoice Items"
+  },
+  {
+   "fieldname": "next_billing_date",
+   "fieldtype": "Date",
+   "label": "Next Billing Date"
+  },
+  {
+   "fetch_from": "customer.taxes_and_charges",
+   "fetch_if_empty": 1,
+   "fieldname": "taxes_and_charges",
+   "fieldtype": "Link",
+   "label": "Customers VAT",
+   "options": "Sales Taxes and Charges Template",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "customer.default_currency",
+   "fieldname": "default_currency",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Customers Currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "section_break_16",
+   "fieldtype": "Section Break"
   }
  ],
- "modified": "2021-03-18 14:15:06.468159",
- "modified_by": "Administrator",
+ "modified": "2021-03-26 10:05:52.586922",
+ "modified_by": "nicole.gret@libracore.com",
  "module": "nothing",
  "name": "Licences",
  "owner": "Administrator",

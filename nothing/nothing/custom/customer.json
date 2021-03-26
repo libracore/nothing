@@ -737,6 +737,29 @@
    "_comments": null,
    "_liked_by": null,
    "_user_tags": null,
+   "creation": "2021-03-25 14:57:49.927253",
+   "default_value": null,
+   "doc_type": "Customer",
+   "docstatus": 0,
+   "doctype_or_field": "DocField",
+   "field_name": "default_currency",
+   "idx": 0,
+   "modified": "2021-03-25 14:57:49.927253",
+   "modified_by": "Administrator",
+   "name": "Customer-default_currency-reqd",
+   "owner": "Administrator",
+   "parent": null,
+   "parentfield": null,
+   "parenttype": null,
+   "property": "reqd",
+   "property_type": "Check",
+   "value": "1"
+  },
+  {
+   "_assign": null,
+   "_comments": null,
+   "_liked_by": null,
+   "_user_tags": null,
    "creation": "2021-02-22 11:38:24.662932",
    "default_value": null,
    "doc_type": "Customer",
@@ -940,5 +963,5 @@
    "value": "1"
   }
  ],
- "sync_on_migrate": 1
+ "sync_on_migrate": 0
 }
