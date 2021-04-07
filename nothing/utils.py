@@ -8,7 +8,7 @@ from frappe import _
 from frappe.utils.data import nowdate, add_days, add_months, add_years, getdate, add_to_date, get_datetime
 
 @frappe.whitelist()
-def create_task(project, task_type, description, item_name, expected_time, exp_start_date, exp_end_date, completed_by):
+def create_task(project, task_type, description, item_name, expected_time='', exp_start_date='', exp_end_date='', completed_by=''):
 	task = frappe.get_doc({
 		"doctype": "Task",
 		"project": project,
@@ -123,7 +123,7 @@ def create_licences_invoice(licence):
 	return sinv.name
 
 @frappe.whitelist()
-def create_timesheet_entry(task, date, activity_type, hours):
+def create_timesheet_entry(task, date, activity_type, hours, description=''):
 	task = frappe.get_doc("Task", task)
 	employee = frappe.db.sql("""SELECT `name` FROM `tabEmployee` WHERE `user_id` = '{user}' AND `status` = 'Active'""".format(user=frappe.session.user), as_dict=True)
 	try:
@@ -152,6 +152,7 @@ def create_timesheet_entry(task, date, activity_type, hours):
 		row.project = task.project
 		row.billable = 1
 		row.billing_hours = float(hours)
+		row.ts_description = description
 		timesheet.save()
 		return timesheet.name
 	else:
@@ -171,7 +172,8 @@ def create_timesheet_entry(task, date, activity_type, hours):
 					'task': task.name,
 					'project': task.project,
 					'billable': 1,
-					'billing_hours': float(hours)
+					'billing_hours': float(hours),
+					'ts_description': description
 				}
 			],
 		})
