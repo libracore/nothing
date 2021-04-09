@@ -103,7 +103,7 @@ def create_licences_invoice(licence):
 				'rate': item.rate,
 				'licences': licence.name,
 				'description': item.description,
-				'income_account': '3005 - Dienstleistungsertrag Export - P' if licence.taxes_and_charges == 'Steuerfrei Export (220) - P' else '3000 - Dienstleistungsertrag - P'
+				'income_account': '3000 - Dienstleistungsertrag - P' if licence.default currency == 'CHF' else '3005 - Dienstleistungsertrag Export - P'
 			}
 		items.append(_item)
 	
@@ -116,7 +116,7 @@ def create_licences_invoice(licence):
 		'contact_person': licence.cust_contact_person,
 		'po_no': licence.cust_po_nr,
 		'company': licence.company,
-		'taxes_and_charges': licence.taxes_and_charges,
+		'taxes_and_charges': 'VAT 7.7% (302) - P' if licence.default_currency == 'CHF' else 'Tax-free Export (220) - P',
 		"items": items
 	})
 	sinv.insert()
@@ -130,15 +130,36 @@ def create_timesheet_entry(task, date, activity_type, hours, description=''):
 		employee = employee[0].name
 	except:
 		frappe.throw(_("No employee found"))
+	project = frappe.get_doc("Project", task.project)
+	billing_rate = project.project_billing_rate
+	if len(project.flex_billing_rate) > 0:
+		special_rate = False
+		# case/prio 1 matching of activity_type and employee
+		for flex_rate in project.flex_billing_rate:
+			if flex_rate.activity_type == activity_type and flex_rate.employee == employee:
+				special_rate = flex_rate.flex_billing_rate
+				billing_rate = special_rate
+		# case/prio 2 matching only employee w/o activity_type
+		if not special_rate:
+			for flex_rate in project.flex_billing_rate:
+				if not flex_rate.activity_type and flex_rate.employee == employee:
+					special_rate = flex_rate.flex_billing_rate
+					billing_rate = special_rate
+		# case/prio 3 matching only activity_type w/o employee
+		if not special_rate:
+			for flex_rate in project.flex_billing_rate:
+				if flex_rate.activity_type == activity_type and not flex_rate.employee:
+					special_rate = flex_rate.flex_billing_rate
+					billing_rate = special_rate
 		
 	existing_ts = frappe.db.sql("""SELECT `name`, `docstatus` FROM `tabTimesheet`
 									WHERE `employee` = '{employee}'
 									AND `start_date` = '{date}'
 									AND `docstatus` != 2""".format(employee=employee, date=date), as_dict=True)
-	
+	# check if timesheet exists
 	if len(existing_ts) > 0:
 		if existing_ts[0].docstatus != 0:
-			frappe.throw(_("Timesheet already submitted for this date, please cancell and amend"))
+			frappe.throw(_("Timesheet already submitted for this date, please cancel and amend"))
 		# add to existing timesheet
 		timesheet = frappe.get_doc("Timesheet", existing_ts[0].name)
 		latest_entry = frappe.db.sql("""SELECT `to_time` FROM `tabTimesheet Detail` WHERE `parent` = '{parent}' ORDER BY `to_time` DESC""".format(parent=timesheet.name), as_dict=True)
@@ -150,9 +171,10 @@ def create_timesheet_entry(task, date, activity_type, hours, description=''):
 		row.hours = float(hours)
 		row.task = task.name
 		row.project = task.project
+		row.billing_rate = billing_rate
 		row.billable = 1
 		row.billing_hours = float(hours)
-		row.ts_description = description
+		row.ts_description = description	
 		timesheet.save()
 		return timesheet.name
 	else:
@@ -173,7 +195,8 @@ def create_timesheet_entry(task, date, activity_type, hours, description=''):
 					'project': task.project,
 					'billable': 1,
 					'billing_hours': float(hours),
-					'ts_description': description
+					'ts_description': description,
+					'billing_rate': billing_rate
 				}
 			],
 		})
