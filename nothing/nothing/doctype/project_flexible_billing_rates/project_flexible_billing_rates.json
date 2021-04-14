@@ -1,0 +1,54 @@
+{
+ "creation": "2021-04-09 10:19:28.022323",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "activity_type",
+  "column_break_2",
+  "employee",
+  "column_break_4",
+  "flex_billing_rate"
+ ],
+ "fields": [
+  {
+   "fieldname": "activity_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Activity Type",
+   "options": "Activity Type"
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "flex_billing_rate",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Billing Rate"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "istable": 1,
+ "modified": "2021-04-09 10:37:21.998306",
+ "modified_by": "Administrator",
+ "module": "nothing",
+ "name": "Project Flexible Billing Rates",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

@@ -93,13 +93,13 @@ doctype_js = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
+scheduler_events = {
 # 	"all": [
 # 		"nothing.tasks.all"
 # 	],
-# 	"daily": [
-# 		"nothing.tasks.daily"
-# 	],
+ 	"daily": [
+ 		"nothing.utils.create_licences_invoice"
+ 	]
 # 	"hourly": [
 # 		"nothing.tasks.hourly"
 # 	],
@@ -109,7 +109,7 @@ doctype_js = {
 # 	"monthly": [
 # 		"nothing.tasks.monthly"
 # 	]
-# }
+}
 
 # Testing
 # -------
