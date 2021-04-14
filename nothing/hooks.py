@@ -98,7 +98,7 @@ scheduler_events = {
 # 		"nothing.tasks.all"
 # 	],
  	"daily": [
- 		"nothing.utils.create_licences_invoice"
+ 		"nothing.nothing.utils.create_licences_invoice"
  	]
 # 	"hourly": [
 # 		"nothing.tasks.hourly"
