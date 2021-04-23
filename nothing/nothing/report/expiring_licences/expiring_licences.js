@@ -2,9 +2,9 @@
 // For license information, please see license.txt
 /* eslint-disable */
 
-frappe.query_reports["Expiring Licenses"] = {
-	"filters": [	
-		{
+frappe.query_reports["Expiring Licences"] = {
+    "filters": [
+        {
             "fieldname":"responsible",
             "label": __("Responsible"),
             "fieldtype": "Link",
@@ -21,6 +21,20 @@ frappe.query_reports["Expiring Licenses"] = {
             "label": __("Billing Intervall"),
             "fieldtype": "Select",
             "options": ["monthly","yearly"]
-        }
-	]
+        },
+        {
+            "fieldname":"from_date",
+            "label": __("From Date"),
+            "fieldtype": "Date",
+            "default": frappe.datetime.add_days(frappe.datetime.get_today(), -7),
+            "width": "60px"
+         },
+         {
+            "fieldname":"to_date",
+            "label": __("To Date"),
+            "fieldtype": "Date",
+            "default": frappe.datetime.add_days(frappe.datetime.get_today(), +7),
+            "width": "60px"
+         }
+    ]
 };

@@ -3,8 +3,8 @@ from frappe import _
 
 
 def get_data():
-	return[
-		{
+    return[
+        {
             "label": _("Licences"),
             "icon": "octicon octicon-organization",
             "items": [
@@ -15,7 +15,14 @@ def get_data():
                        "color": "#f88c00",
                        "icon": "octicon octicon-person",
                        "description": _("Licences")                 
+                   },
+                   {
+                       "type": "report",
+                       "name": "Expiring Licences",
+                       "doctype": "Licences",
+                       "label": _("Expiring Licences"),
+                       "is_query_report": True            
                    }
             ]
-		}
-	]
+        }
+    ]
