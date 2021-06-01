@@ -1,0 +1,32 @@
+{
+ "add_total_row": 0,
+ "creation": "2021-05-20 14:07:54.651598",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "idx": 0,
+ "is_standard": "Yes",
+ "letter_head": "Nothing AG",
+ "modified": "2021-05-20 14:10:50.066471",
+ "modified_by": "Administrator",
+ "module": "nothing",
+ "name": "New Licence-SI",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "SELECT\n\t`tabSales Invoice`.`name` AS `Invoice`,\n    `tabSales Invoice Item`.`licences` AS `Licence`,\n    `tabSales Invoice`.`customer` AS `Customer Nr.`,\n    `tabSales Invoice`.`customer_name` AS `Customer`,\n\t`tabSales Invoice`.`grand_total` AS `Total`,\n\t`tabSales Invoice`.`status` AS `Status`,\n\t`tabSales Invoice`.`due_date` AS `Due Date`\nFROM `tabSales Invoice`\nLEFT JOIN `tabSales Invoice Item` ON `tabSales Invoice`.`name` = `tabSales Invoice Item`.`parent`\nWHERE `tabSales Invoice Item`.`licences` IS NOT NULL\nAND `tabSales Invoice`.`docstatus` = '0'",
+ "ref_doctype": "Sales Invoice",
+ "report_name": "New Licence-SI",
+ "report_type": "Query Report",
+ "roles": [
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Accounts User"
+  },
+  {
+   "role": "Sales User"
+  }
+ ]
+}

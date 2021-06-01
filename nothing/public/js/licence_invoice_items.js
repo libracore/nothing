@@ -4,9 +4,10 @@ For license information, please see license.txt*/
 frappe.ui.form.on('Licences Invoice Items', {
 	item_code: function(frm, cdt, cdn) {
 		var item = locals[cdt][cdn];
+		console.log(item)
 		if (item.item_code) {
 			frappe.call({
-				"method": "nothing.utils.get_item_rate",
+				"method": "nothing.nothing.utils.get_item_rate",
 				"args": {
 					"licence": item.parent,
 					"item_code": item.item_code
