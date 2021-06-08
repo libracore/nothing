@@ -204,10 +204,7 @@ def create_timesheet_entry(task, date, activity_type, hours, description=''):
 		return timesheet.name
 
 @frappe.whitelist()
-def get_item_rate(licence, item_code):
-	licence = frappe.get_doc("Licences", licence)
-	currency = licence.default_currency
-	
+def get_item_rate(currency, item_code):
 	rates = frappe.db.sql("""SELECT `price_list_rate` FROM `tabItem Price` WHERE
 							`currency` = '{currency}'
 							AND `item_code` = '{item_code}'
