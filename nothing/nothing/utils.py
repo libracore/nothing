@@ -103,7 +103,7 @@ def create_licences_invoice(licence):
 				'rate': item.rate,
 				'licences': licence.name,
 				'description': item.description,
-				'income_account': '3000 - Dienstleistungsertrag - P' if licence.default_currency == 'CHF' else '3005 - Dienstleistungsertrag Export - P'
+				'income_account': '3000 - Dienstleistungsertrag - PRD' if licence.default_currency == 'CHF' else '3005 - Dienstleistungsertrag Export - PRD'
 			}
 		items.append(_item)
 	
@@ -116,7 +116,7 @@ def create_licences_invoice(licence):
 		'contact_person': licence.cust_contact_person,
 		'po_no': licence.cust_po_nr,
 		'company': licence.company,
-		'taxes_and_charges': 'VAT 7.7% (302) - P' if licence.default_currency == 'CHF' else 'Tax-free Export (220) - P',
+		'taxes_and_charges': 'VAT 7.7% (302) - PRD' if licence.default_currency == 'CHF' else 'Tax-free Export (220) - PRD',
 		"items": items
 	})
 	sinv.insert()
