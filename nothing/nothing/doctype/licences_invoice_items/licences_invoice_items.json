@@ -15,6 +15,8 @@
   "qty",
   "stock_uom",
   "section_break1",
+  "discount_percentage",
+  "discount_amount",
   "rate",
   "amount",
   "default_currency",
@@ -113,6 +115,7 @@
    "oldfieldname": "export_amount",
    "oldfieldtype": "Currency",
    "options": "currency",
+   "read_only": 1,
    "reqd": 1
   },
   {
@@ -124,10 +127,23 @@
    "fieldname": "default_currency",
    "fieldtype": "Currency",
    "label": "Customer's Currency"
+  },
+  {
+   "depends_on": "rate",
+   "fieldname": "discount_percentage",
+   "fieldtype": "Percent",
+   "label": "Discount (%) on Price List Rate with Margin",
+   "precision": "2"
+  },
+  {
+   "fieldname": "discount_amount",
+   "fieldtype": "Data",
+   "label": "Discount Amount",
+   "read_only": 1
   }
  ],
  "istable": 1,
- "modified": "2021-03-26 09:09:30.273711",
+ "modified": "2021-06-23 09:13:55.895918",
  "modified_by": "nicole.gret@libracore.com",
  "module": "nothing",
  "name": "Licences Invoice Items",

@@ -107,8 +107,13 @@ def create_licences_invoice(licence):
 			}
 		items.append(_item)
 	
+	naming_series = 'PRD-SI-.#####'
+	if 'Nothing' in licence.company:
+		naming_series = 'PRD-SI-.#####'
+	
 	sinv = frappe.get_doc({
 		"doctype": "Sales Invoice",
+		"naming_series": naming_series,
 		"customer": licence.customer,
 		'serviceperiod_from_date': add_months(licence.expiration_date, -1) if licence.billing_intervall == 'monthly' else add_years(licence.expiration_date, -1),
 		'serviceperiod_to_date': licence.expiration_date,
@@ -117,6 +122,8 @@ def create_licences_invoice(licence):
 		'po_no': licence.cust_po_nr,
 		'company': licence.company,
 		'taxes_and_charges': 'VAT 7.7% (302) - PRD' if licence.default_currency == 'CHF' else 'Tax-free Export (220) - PRD',
+		'additional_discount_percentage': licence.discount,
+		'apply_discount_on': 'Net Total',
 		"items": items
 	})
 	sinv.insert()
@@ -174,7 +181,7 @@ def create_timesheet_entry(task, date, activity_type, hours, description=''):
 		row.billing_rate = billing_rate
 		row.billable = 1
 		row.billing_hours = float(hours)
-		row.ts_description = description	
+		row.ts_description = description
 		timesheet.save()
 		return timesheet.name
 	else:
@@ -222,17 +229,22 @@ def get_timelogs_of_task_items(sinv):
 	sinv = frappe.get_doc("Sales Invoice", sinv)
 	for _item in sinv.items:
 		item = frappe.get_doc("Item", _item.item_code)
+		uom = _item.uom
 		data[item.item_code] = {
 			'qty': 0,
 			'rate': 0
 		}
 		
 		time_logs = frappe.db.sql("""SELECT SUM(`billing_amount`) AS `billing_amount`, SUM(`hours`) AS `hours` FROM `tabTimesheet Detail`
-										WHERE `task` = '{task}' AND `docstatus` != 2""".format(task=item.task), as_dict=True)
+										WHERE `task` = '{task}' AND `docstatus` != 2 AND `billable` = 1""".format(task=item.task), as_dict=True)
 		
 		if len(time_logs) > 0:
 			#frappe.throw(str(time_logs))
 			if time_logs[0].hours:
-				data[item.item_code]["qty"] = time_logs[0].hours
-				data[item.item_code]["rate"] = time_logs[0].billing_amount / time_logs[0].hours
+				if uom == "h":
+					data[item.item_code]["qty"] = time_logs[0].hours
+					data[item.item_code]["rate"] = time_logs[0].billing_amount / time_logs[0].hours
+				else:
+					data[item.item_code]["qty"] = time_logs[0].hours / 8
+					data[item.item_code]["rate"] = time_logs[0].billing_amount / time_logs[0].hours * 8
 	return data

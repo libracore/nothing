@@ -6,8 +6,15 @@ def get_data():
 	return [
 		{
 			"module_name": "nothing",
-			"color": "grey",
-			"icon": "octicon octicon-file-directory",
+			"color": "orange",
+			"icon": "fa fa-codepen",
+			"type": "module",
+			"label": _("Nothing")
+		},
+		{
+			"module_name": "peerdom",
+			"color": "green",
+			"icon": "fa fa-dice-d20",
 			"type": "module",
 			"label": _("Peerdom")
 		}
