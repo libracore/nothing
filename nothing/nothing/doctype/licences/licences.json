@@ -117,6 +117,7 @@
    "fetch_if_empty": 1,
    "fieldname": "taxes_and_charges",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Customers VAT",
    "options": "Sales Taxes and Charges Template",
    "read_only": 1
@@ -159,7 +160,7 @@
    "read_only": 1
   }
  ],
- "modified": "2021-06-23 09:12:27.567866",
+ "modified": "2021-06-23 17:22:40.398781",
  "modified_by": "nicole.gret@libracore.com",
  "module": "nothing",
  "name": "Licences",

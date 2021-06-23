@@ -95,6 +95,16 @@ def licence_invoice_run(single_run=False):
 def create_licences_invoice(licence):
 	items = []
 	
+	naming_series = 'PRD-SI-.#####'
+	cost_center = 'Main - PRD'
+	taxes_and_charges = 'VAT 7.7% (302) - PRD' if licence.default_currency == 'CHF' else 'Tax-free Export (220) - PRD'
+	income_account = '3000 - Dienstleistungsertrag - PRD' if licence.default_currency == 'CHF' else '3005 - Dienstleistungsertrag Export - PRD'
+	if 'Nothing' in licence.company:
+		naming_series = 'NIN-SI-.#####'
+		cost_center = 'Main - NIN'
+		taxes_and_charges = 'VAT 7.7% (302) - NIN' if licence.default_currency == 'CHF' else 'Tax-free Export (220) - NIN'
+		income_account = '3000 - Dienstleistungsertrag - NIN' if licence.default_currency == 'CHF' else '3005 - Dienstleistungsertrag Export - NIN'
+	
 	for item in licence.items:
 		_item = {
 				'item_code': item.item_code,
@@ -103,13 +113,10 @@ def create_licences_invoice(licence):
 				'rate': item.rate,
 				'licences': licence.name,
 				'description': item.description,
-				'income_account': '3000 - Dienstleistungsertrag - PRD' if licence.default_currency == 'CHF' else '3005 - Dienstleistungsertrag Export - PRD'
+				'cost_center': cost_center,
+				'income_account': income_account
 			}
 		items.append(_item)
-	
-	naming_series = 'PRD-SI-.#####'
-	if 'Nothing' in licence.company:
-		naming_series = 'PRD-SI-.#####'
 	
 	sinv = frappe.get_doc({
 		"doctype": "Sales Invoice",
@@ -121,7 +128,7 @@ def create_licences_invoice(licence):
 		'contact_person': licence.cust_contact_person,
 		'po_no': licence.cust_po_nr,
 		'company': licence.company,
-		'taxes_and_charges': 'VAT 7.7% (302) - PRD' if licence.default_currency == 'CHF' else 'Tax-free Export (220) - PRD',
+		'taxes_and_charges': taxes_and_charges,
 		'additional_discount_percentage': licence.discount,
 		'apply_discount_on': 'Net Total',
 		"items": items
