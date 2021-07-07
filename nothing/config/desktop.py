@@ -14,7 +14,7 @@ def get_data():
 		{
 			"module_name": "peerdom",
 			"color": "green",
-			"icon": "fa fa-dice-d20",
+			"icon": "fa fa-basektball-ball",
 			"type": "module",
 			"label": _("Peerdom")
 		}
