@@ -144,27 +144,9 @@ def create_timesheet_entry(task, date, activity_type, hours, description=''):
 		employee = employee[0].name
 	except:
 		frappe.throw(_("No employee found"))
-	project = frappe.get_doc("Project", task.project)
-	billing_rate = project.project_billing_rate
-	if len(project.flex_billing_rate) > 0:
-		special_rate = False
-		# case/prio 1 matching of activity_type and employee
-		for flex_rate in project.flex_billing_rate:
-			if flex_rate.activity_type == activity_type and flex_rate.employee == employee:
-				special_rate = flex_rate.flex_billing_rate
-				billing_rate = special_rate
-		# case/prio 2 matching only employee w/o activity_type
-		if not special_rate:
-			for flex_rate in project.flex_billing_rate:
-				if not flex_rate.activity_type and flex_rate.employee == employee:
-					special_rate = flex_rate.flex_billing_rate
-					billing_rate = special_rate
-		# case/prio 3 matching only activity_type w/o employee
-		if not special_rate:
-			for flex_rate in project.flex_billing_rate:
-				if flex_rate.activity_type == activity_type and not flex_rate.employee:
-					special_rate = flex_rate.flex_billing_rate
-					billing_rate = special_rate
+	
+	billing_rate = get_billing_rate(task.project, activity_type, employee)
+	#return billing_rate
 		
 	existing_ts = frappe.db.sql("""SELECT `name`, `docstatus` FROM `tabTimesheet`
 									WHERE `employee` = '{employee}'
@@ -216,6 +198,33 @@ def create_timesheet_entry(task, date, activity_type, hours, description=''):
 		})
 		timesheet.insert()
 		return timesheet.name
+		
+@frappe.whitelist()
+def get_billing_rate(project, activity_type, employee):
+	project = frappe.get_doc("Project", project)
+	billing_rate = project.project_billing_rate
+	if len(project.flex_billing_rate) > 0:
+		special_rate = False
+		# case/prio 1 matching of activity_type and employee
+		for flex_rate in project.flex_billing_rate:
+			if flex_rate.activity_type == activity_type and flex_rate.employee == employee:
+				special_rate = flex_rate.flex_billing_rate
+				billing_rate = special_rate
+				return billing_rate
+		# case/prio 2 matching only employee w/o activity_type
+		if not special_rate:
+			for flex_rate in project.flex_billing_rate:
+				if not flex_rate.activity_type and flex_rate.employee == employee:
+					special_rate = flex_rate.flex_billing_rate
+					billing_rate = special_rate
+					return billing_rate
+		# case/prio 3 matching only activity_type w/o employee
+		if not special_rate:
+			for flex_rate in project.flex_billing_rate:
+				if flex_rate.activity_type == activity_type and not flex_rate.employee:
+					special_rate = flex_rate.flex_billing_rate
+					billing_rate = special_rate
+					return billing_rate
 
 @frappe.whitelist()
 def get_item_rate(currency, item_code):
