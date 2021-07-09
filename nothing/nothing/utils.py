@@ -225,6 +225,9 @@ def get_billing_rate(project, activity_type, employee):
 					special_rate = flex_rate.flex_billing_rate
 					billing_rate = special_rate
 					return billing_rate
+	else:
+		return billing_rate
+	return billing_rate
 
 @frappe.whitelist()
 def get_item_rate(currency, item_code):
