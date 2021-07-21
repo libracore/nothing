@@ -5,7 +5,8 @@
 from __future__ import unicode_literals
 import frappe
 from frappe import _
-from frappe.utils.data import nowdate, add_days, add_months, add_years, getdate, add_to_date, get_datetime
+from frappe.utils.data import nowdate, add_days, add_months, add_years, getdate, add_to_date, get_datetime, get_datetime_str
+from datetime import date, timedelta
 
 @frappe.whitelist()
 def create_task(project, task_type, description, item_name, expected_time='', exp_start_date='', exp_end_date='', completed_by=''):
@@ -267,3 +268,60 @@ def get_timelogs_of_task_items(sinv):
 					data[item.item_code]["qty"] = time_logs[0].hours / 8
 					data[item.item_code]["rate"] = time_logs[0].billing_amount / time_logs[0].hours * 8
 	return data
+
+def create_holiday_timesheet(doc, method):
+    from erpnextswiss.erpnextswiss.report.worktime_overview.worktime_overview import get_target_time
+    
+    company = doc.company
+    from_date = doc.from_date
+    to_date = doc.to_date
+    year = getdate(from_date).strftime("%Y")
+    timelogs = []
+    if doc.half_day:
+        if doc.half_day_date:
+            half_day_date = doc.half_day_date
+        else:
+            half_day_date = doc.from_date
+    else:
+        half_day_date = False
+    
+    holiday_lists = frappe.db.sql("""SELECT `year`, `public_holiday_list` FROM `tabPublic Holiday List` WHERE `year` = '{year}' AND `company` = '{company}' LIMIT 1""".format(year=year, company=company), as_dict=True)
+    if len(holiday_lists) > 0:
+        holiday_list = holiday_lists[0].public_holiday_list
+        _holiday_list_entries = frappe.db.sql("""SELECT `holiday_date` FROM `tabHoliday` WHERE `parent` = '{holiday_list}'""".format(holiday_list=holiday_list), as_list=True)
+        holiday_list_entries = []
+        
+        for entry in _holiday_list_entries:
+            holiday_list_entries.append(entry[0])
+            
+        start_date = getdate(from_date)
+        end_date = getdate(to_date)
+        delta = timedelta(days=1)
+        
+        while start_date <= end_date:
+            if start_date not in holiday_list_entries:
+                filters = frappe._dict()
+                filters.company = doc.company
+                filters.to_date = start_date
+                filters.from_date = start_date
+                hours = get_target_time(filters, doc.employee)
+                from_time = get_datetime(get_datetime_str(start_date.strftime("%Y-%m-%d") + " 08:00:00"))
+                to_time = add_to_date(from_time, hours=hours)
+                if half_day_date:
+                    if start_date == half_day_date:
+                        hours = hours / 2
+                timelogs.append({
+                    "activity_type": 'Urlaub',
+                    "hours": hours,
+                    "from_time": from_time,
+                    "to_time": to_time
+                })
+            start_date += delta
+        
+        ts = frappe.get_doc({
+            "doctype": "Timesheet",
+            "employee": doc.employee,
+            "time_logs": timelogs
+        })
+        ts.insert(ignore_permissions=True)
+        ts.submit()

@@ -89,6 +89,11 @@ doctype_js = {
 # 		"on_trash": "method"
 #	}
 # }
+doc_events = {
+    "Leave Application": {
+        "on_submit": "nothing.nothing.utils.create_holiday_timesheet"
+    }
+}
 
 # Scheduled Tasks
 # ---------------
