@@ -270,8 +270,6 @@ def get_timelogs_of_task_items(sinv):
     return data
 
 def create_holiday_timesheet(doc, method):
-    from erpnextswiss.erpnextswiss.report.worktime_overview.worktime_overview import get_target_time
-    
     company = doc.company
     from_date = doc.from_date
     to_date = doc.to_date
@@ -308,12 +306,12 @@ def create_holiday_timesheet(doc, method):
                 filters.company = doc.company
                 filters.to_date = start_date
                 filters.from_date = start_date
-                hours = get_target_time(filters, doc.employee)
+                hours = get_daily_hours(company)
                 from_time = get_datetime(get_datetime_str(start_date.strftime("%Y-%m-%d") + " 08:00:00"))
-                to_time = add_to_date(from_time, hours=hours)
                 if half_day_date:
                     if start_date == half_day_date:
                         hours = hours / 2
+                to_time = add_to_date(from_time, hours=hours)
                 timelogs.append({
                     "activity_type": activity_type,
                     "hours": hours,
@@ -329,3 +327,11 @@ def create_holiday_timesheet(doc, method):
         })
         ts.insert(ignore_permissions=True)
         ts.submit()
+        
+def get_daily_hours(company):
+    try:
+        daily_hours = frappe.db.sql("""SELECT `daily_hours` FROM `tabDaily Hours` WHERE `company` = '{company}' LIMIT 1""".format(company=company), as_list=True)[0][0]
+    except:
+        # fallback
+        daily_hours = 8
+    return daily_hours
