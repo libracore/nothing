@@ -1,0 +1,25 @@
+{
+ "add_total_row": 0,
+ "creation": "2021-08-25 14:21:56.212909",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "idx": 0,
+ "is_standard": "Yes",
+ "letter_head": "Nothing AG",
+ "modified": "2021-08-25 14:21:56.212909",
+ "modified_by": "Administrator",
+ "module": "nothing",
+ "name": "Timesheet Work Script Report",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "Timesheet Detail",
+ "report_name": "Timesheet Work Script Report",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "System Manager"
+  }
+ ]
+}
