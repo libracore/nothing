@@ -53,8 +53,8 @@ def licence_invoice_run(single_run=False):
         licences = frappe.db.sql(sql_query, as_list=True)
         
         for _licence in licences:
-            licence = frappe.get_doc("Licences", _licence[0])
-            if licence:
+            # licence = frappe.get_doc("Licences", _licence[0])
+            # if licence:
                 try:
                     # create invoice
                     sinv = create_licences_invoice(licence)
@@ -92,6 +92,57 @@ def licence_invoice_run(single_run=False):
                 return {
                     'error': e
                 }
+
+@frappe.whitelist()
+def create_licences_invoice(licence=False):
+    # if not licence:
+        # licences = '''mein query zum hollen aller lizenznummern wo = was weiss ich'''
+    # else:
+        # licences = [licence]
+    
+    #for licence in licences:
+        items = []
+        
+        naming_series = 'PRD-SI-.#####'
+        cost_center = 'Main - PRD'
+        taxes_and_charges = 'VAT 7.7% (302) - PRD' if licence.default_currency == 'CHF' else 'Tax-free Export (220) - PRD'
+        income_account = '3000 - Dienstleistungsertrag - PRD' if licence.default_currency == 'CHF' else '3005 - Dienstleistungsertrag Export - PRD'
+        if 'Nothing' in licence.company:
+            naming_series = 'NIN-SI-.#####'
+            cost_center = 'Main - NIN'
+            taxes_and_charges = 'VAT 7.7% (302) - NIN' if licence.default_currency == 'CHF' else 'Tax-free Export (220) - NIN'
+            income_account = '3000 - Dienstleistungsertrag - NIN' if licence.default_currency == 'CHF' else '3005 - Dienstleistungsertrag Export - NIN'
+        
+        for item in licence.items:
+            _item = {
+                    'item_code': item.item_code,
+                    'qty': item.qty,
+                    'uom': item.stock_uom,
+                    'rate': item.rate,
+                    'licences': licence.name,
+                    'description': item.description,
+                    'cost_center': cost_center,
+                    'income_account': income_account
+                }
+            items.append(_item)
+        
+        sinv = frappe.get_doc({
+            "doctype": "Sales Invoice",
+            "naming_series": naming_series,
+            "customer": licence.customer,
+            'serviceperiod_from_date': add_months(licence.expiration_date, -1) if licence.billing_intervall == 'monthly' else add_years(licence.expiration_date, -1),
+            'serviceperiod_to_date': licence.expiration_date,
+            'responsible': licence.responsible,
+            'contact_person': licence.cust_contact_person,
+            'po_no': licence.cust_po_nr,
+            'company': licence.company,
+            'taxes_and_charges': taxes_and_charges,
+            'additional_discount_percentage': licence.discount,
+            'apply_discount_on': 'Net Total',
+            "items": items
+        })
+        sinv.insert()
+        return sinv.name
     
 @frappe.whitelist()
 def create_split_invoice(sales_order):
