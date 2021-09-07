@@ -298,7 +298,9 @@ def create_holiday_timesheet(doc, method):
     year = getdate(from_date).strftime("%Y")
     timelogs = []
     try:
-        activity_type = frappe.get_doc("Worktime Settings", "Worktime Settings").activity_type_determination[0].activity_type
+        #activity_type = frappe.get_doc("Worktime Settings", "Worktime Settings").activity_type_determination[0].activity_type
+        # take activity_type from leave_type
+        activity_type = doc.leave_type
     except:
         activity_type = "Urlaub"
     if doc.half_day:
