@@ -49,6 +49,12 @@ def get_data():
                        "name": "Payment Entry",
                        "label": _("Payment Entry"),
                        "description": _("Payment Entry")
+                   },
+                   {
+                       "type": "doctype",
+                       "name": "Nothing Settings",
+                       "label": _("Licence Settings"),
+                       "description": _("Licence Settings")         
                    }
             ]
         },

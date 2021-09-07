@@ -22,6 +22,12 @@ def get_data():
                        "doctype": "Licences",
                        "label": _("Expiring Licences"),
                        "is_query_report": True            
+                   },
+                   {
+                       "type": "doctype",
+                       "name": "Nothing Settings",
+                       "label": _("Licence Settings"),
+                       "description": _("Licence Settings")         
                    }
             ]
         }
