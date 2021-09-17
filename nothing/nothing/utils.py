@@ -359,3 +359,64 @@ def get_daily_hours(company):
         # fallback
         daily_hours = 8
     return daily_hours
+    
+
+@frappe.whitelist()
+def create_partial_invoice(so, row):
+    so = frappe.get_doc("Sales Order", so)
+    row_doc = frappe.get_doc("Payment Plan", row)
+    #for tax-related country field in si#
+    if so.customer_address:
+        country = frappe.get_value("Address", so.customer_address, "country")
+    else:
+        country = frappe.get_value("Company", so.company, "country")    # fallback to company's country in case address missing
+    
+
+    si = frappe.get_doc({
+        "doctype": "Sales Invoice",
+        "customer": so.customer,
+        "responsible": so.responsible,
+        "project": so.project,
+        "product_title": so.product_title,
+        "company": so.company,
+        "customer_address": so.customer_address,
+        "address_country":  country,
+        "shipping_address_name": so.shipping_address_name,
+        "currency": so.currency,
+        "po_no": so.po_no,
+        "selling_price_list": so.selling_price_list,
+        "taxes_and_charges": so.taxes_and_charges,
+        "percentage_billed": row_doc.invoice_portion,
+        "payment_terms_template": so.payment_terms_template
+    })
+    for item in so.items:
+        si.append("items", {
+            'item_code': item.item_code,
+            'rate': item.rate,
+            'description': item.description,
+            'qty': item.qty /100 * row_doc.invoice_portion,
+            'sales_order': so.name,
+            'so_detail': item.name
+        })
+    for t in so.taxes:
+        si.append("taxes", {
+            'charge_type': t.charge_type,
+            'account_head': t.account_head,
+            'description': t.description,
+            'rate': t.rate
+        })
+    si.insert()
+    #set si_name into so payment plan table
+    frappe.db.sql("""UPDATE `tabPayment Plan` SET `sales_invoice` = "{name}" WHERE `name` = "{row}";""".format(
+        name=si.name, row=row))
+    frappe.db.commit()
+
+    return si.name
+
+
+
+
+
+
+
+
