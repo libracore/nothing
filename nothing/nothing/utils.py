@@ -97,6 +97,8 @@ def create_licence_invoice(licence_name):
     for item in licence.items:
         this_item = {
                 'item_code': item.item_code,
+                'peer': item.peers,
+                'month': item.months,
                 'qty': item.qty,
                 'uom': item.stock_uom,
                 'rate': item.rate,

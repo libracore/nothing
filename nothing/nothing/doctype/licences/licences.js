@@ -33,6 +33,8 @@ frappe.ui.form.on('Licences Invoice Items', {
 	},
 	qty: function(frm, cdt, cdn) {
 		update_amount(frm, cdt, cdn);
+		update_net_total(frm);
+		update_discounted_net_total(frm);
 	},
 	rate: function(frm, cdt, cdn) {
 		update_amount(frm, cdt, cdn);
@@ -46,6 +48,12 @@ frappe.ui.form.on('Licences Invoice Items', {
 	items_remove: function(frm, cdt, cdn) {
 		update_net_total(frm);
 		update_discounted_net_total(frm);
+	},
+	peers: function(frm, cdt, cdn) {
+		update_qty(frm, cdt, cdn);
+	},
+	months: function(frm, cdt, cdn) {
+		update_qty(frm, cdt, cdn);
 	}
 });
 
@@ -66,4 +74,10 @@ function update_net_total(frm) {
 function update_discounted_net_total(frm) {
 	var discounted_net = ((100 - frm.doc.discount) / 100) * frm.doc.net_total;
 	cur_frm.set_value('discounted_net', discounted_net);
+}
+
+function update_qty(frm, cdt, cdn) {
+    var item = locals[cdt][cdn];
+    var calc_qty = item.peers * item.months
+    frappe.model.set_value(cdt, cdn, 'qty', calc_qty);
 }
