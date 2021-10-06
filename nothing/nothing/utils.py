@@ -116,7 +116,6 @@ def create_licence_invoice(licence_name):
         "customer": licence.customer,
         'serviceperiod_from_date': add_months(licence.expiration_date, -1) if licence.billing_intervall == 'monthly' else add_years(licence.expiration_date, -1),
         'serviceperiod_to_date': licence.expiration_date,
-        'responsible': licence.responsible,
         'contact_person': licence.cust_contact_person,
         'po_no': licence.cust_po_nr,
         'company': licence.company,
