@@ -25,6 +25,7 @@
   "column_break_19",
   "net_total",
   "discount",
+  "discount_description",
   "discounted_net"
  ],
  "fields": [
@@ -151,10 +152,15 @@
    "fieldtype": "Currency",
    "label": "Discounted Net Price",
    "read_only": 1
+  },
+  {
+   "fieldname": "discount_description",
+   "fieldtype": "Data",
+   "label": "Discount Description"
   }
  ],
- "modified": "2021-10-06 09:02:03.619821",
- "modified_by": "Administrator",
+ "modified": "2021-10-20 08:21:58.269684",
+ "modified_by": "nicole.gret@libracore.com",
  "module": "nothing",
  "name": "Licences",
  "owner": "Administrator",
