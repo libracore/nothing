@@ -1389,7 +1389,7 @@
    "doctype_or_field": "DocType",
    "field_name": null,
    "idx": 0,
-   "modified": "2021-03-04 14:25:24.460413",
+   "modified": "2021-10-21 08:13:24.460413",
    "modified_by": "nicole.gret@libracore.com",
    "name": "Sales Invoice-default_print_format",
    "owner": "nicole.gret@libracore.com",
@@ -1398,7 +1398,7 @@
    "parenttype": null,
    "property": "default_print_format",
    "property_type": "Data",
-   "value": "Sales Invoice Nothing"
+   "value": "Sales Invoice - Nothing"
   },
   {
    "_assign": null,
