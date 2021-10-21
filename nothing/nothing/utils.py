@@ -119,6 +119,7 @@ def create_licence_invoice(licence_name):
         'contact_person': licence.cust_contact_person,
         'po_no': licence.cust_po_nr,
         'company': licence.company,
+        'currency': licence.default_currency,
         'additional_discount_description': licence.discount_description,
         'taxes_and_charges': taxes_and_charges,
         'additional_discount_percentage': licence.discount,
