@@ -136,6 +136,7 @@
    "fieldname": "net_total",
    "fieldtype": "Currency",
    "label": "Total Net Price",
+   "options": "default_currency",
    "read_only": 1
   },
   {
@@ -151,6 +152,7 @@
    "fieldname": "discounted_net",
    "fieldtype": "Currency",
    "label": "Discounted Net Price",
+   "options": "default_currency",
    "read_only": 1
   },
   {
@@ -159,8 +161,8 @@
    "label": "Discount Description"
   }
  ],
- "modified": "2021-10-20 08:21:58.269684",
- "modified_by": "nicole.gret@libracore.com",
+ "modified": "2021-10-25 10:46:41.731733",
+ "modified_by": "Administrator",
  "module": "nothing",
  "name": "Licences",
  "owner": "Administrator",

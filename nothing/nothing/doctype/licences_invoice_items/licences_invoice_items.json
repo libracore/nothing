@@ -21,7 +21,6 @@
   "discount_amount",
   "rate",
   "amount",
-  "default_currency",
   "col_break3"
  ],
  "fields": [
@@ -105,7 +104,7 @@
    "label": "Rate",
    "oldfieldname": "export_rate",
    "oldfieldtype": "Currency",
-   "options": "currency",
+   "options": "default_currency",
    "reqd": 1
   },
   {
@@ -116,19 +115,13 @@
    "label": "Amount",
    "oldfieldname": "export_amount",
    "oldfieldtype": "Currency",
-   "options": "currency",
+   "options": "default_currency",
    "read_only": 1,
    "reqd": 1
   },
   {
    "fieldname": "col_break3",
    "fieldtype": "Column Break"
-  },
-  {
-   "fetch_from": "customer.default_currency",
-   "fieldname": "default_currency",
-   "fieldtype": "Currency",
-   "label": "Customer's Currency"
   },
   {
    "depends_on": "rate",
@@ -159,7 +152,7 @@
   }
  ],
  "istable": 1,
- "modified": "2021-10-04 11:19:16.209103",
+ "modified": "2021-10-25 10:45:41.465144",
  "modified_by": "Administrator",
  "module": "nothing",
  "name": "Licences Invoice Items",
