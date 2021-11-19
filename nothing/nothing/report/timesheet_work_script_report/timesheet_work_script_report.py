@@ -14,6 +14,8 @@ def execute(filters=None):
             {"label": _("Task Link"), "fieldname": "task", "fieldtype": "Link", "options": "Task", "width":"100"},
             {"label": _("Task Name"), "fieldname": "subject", "fieldtype": "Data", "width":"100"},
             {"label": _("Task Description"), "fieldname": "ts_description", "fieldtype": "Text", "width":"100"},
+            {"label": _("From Time"), "fieldname": "from_time", "fieldtype": "Datetime", "width":"140"},
+            {"label": _("Timesheet"), "fieldname": "name", "fieldtype": "Link", "options": "Timesheet", "width":"100"},
             {"label": _("Verrechenbare Stunden"), "fieldname": "billing_hours", "fieldtype": "Float", "width":"70"},
             {"label": _("Stunden"), "fieldname": "hours", "fieldtype": "Float", "width":"70"}
             ]
@@ -47,12 +49,14 @@ def get_data(project=None, start_date=None, end_date=None):
                 `tabTimesheet Detail`.`task` AS `task`,
                 `tabTask`.`subject` AS `subject`,
                 `tabTimesheet Detail`.`ts_description` AS `ts_description`,
+                `tabTimesheet Detail`.`from_time` AS `from_time`,
+                `tabTimesheet`.`name` AS `name`,
                 `tabTimesheet`.`start_date` AS `start_date`,
                 `tabTimesheet`.`end_date` AS `end_date`
     FROM `tabTimesheet Detail`
     LEFT JOIN `tabTimesheet` ON `tabTimesheet Detail`.`parent` = `tabTimesheet`.`name`
     LEFT JOIN `tabTask` ON `tabTimesheet Detail`.`task` = `tabTask`.`name`
-    WHERE `tabTimesheet Detail`.`project` {project}{additional_conditions}
+    WHERE `tabTimesheet Detail`.`project` {project} AND `tabTimesheet`.`docstatus` < 2{additional_conditions}
     ORDER BY `tabTimesheet Detail`.`project` ASC
     """.format(project=project, additional_conditions=additional_conditions)
     
