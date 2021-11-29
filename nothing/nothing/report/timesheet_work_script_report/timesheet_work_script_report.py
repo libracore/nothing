@@ -15,29 +15,30 @@ def execute(filters=None):
             {"label": _("Task Name"), "fieldname": "subject", "fieldtype": "Data", "width":"100"},
             {"label": _("Task Description"), "fieldname": "ts_description", "fieldtype": "Text", "width":"100"},
             {"label": _("From Time"), "fieldname": "from_time", "fieldtype": "Datetime", "width":"140"},
+            {"label": _("To Time"), "fieldname": "to_time", "fieldtype": "Datetime", "width":"140"},
             {"label": _("Timesheet"), "fieldname": "name", "fieldtype": "Link", "options": "Timesheet", "width":"100"},
             {"label": _("Verrechenbare Stunden"), "fieldname": "billing_hours", "fieldtype": "Float", "width":"70"},
             {"label": _("Stunden"), "fieldname": "hours", "fieldtype": "Float", "width":"70"}
             ]
             
     if filters:
-        data = get_data(project=filters.project, start_date=filters.start_date, end_date=filters.end_date)
+        data = get_data(project=filters.project, from_time=filters.from_time, to_time=filters.to_time)
     else:
         data = get_data()
         
     return columns, data
 
 
-def get_data(project=None, start_date=None, end_date=None):
+def get_data(project=None, from_time=None, to_time=None):
     if not project: 
         project = "IS NOT NULL"
     else:
         project = "= '{project}'".format(project=project)
     additional_conditions = ""
-    if start_date:
-        additional_conditions += """ AND (`tabTimesheet`.`start_date` >= '{start_date}' OR `tabTimesheet`.`start_date` IS NULL)""".format(start_date=start_date)
-    if end_date:
-        additional_conditions += """ AND (`tabTimesheet`.`end_date` <= '{end_date}' OR `tabTimesheet`.`end_date` IS NULL)""".format(end_date=end_date)
+    if from_time:
+        additional_conditions += """ AND (`tabTimesheet Detail`.`from_time` >= '{from_time}' )""".format(from_time=from_time)
+    if to_time:
+        additional_conditions += """ AND (`tabTimesheet Detail`.`to_time` <= '{to_time}' )""".format(to_time=to_time)
         
     sql_query = """SELECT 
                 `tabTimesheet Detail`.`project` AS `project`,
@@ -49,10 +50,9 @@ def get_data(project=None, start_date=None, end_date=None):
                 `tabTimesheet Detail`.`task` AS `task`,
                 `tabTask`.`subject` AS `subject`,
                 `tabTimesheet Detail`.`ts_description` AS `ts_description`,
-                `tabTimesheet Detail`.`from_time` AS `from_time`,
                 `tabTimesheet`.`name` AS `name`,
-                `tabTimesheet`.`start_date` AS `start_date`,
-                `tabTimesheet`.`end_date` AS `end_date`
+                `tabTimesheet Detail`.`from_time` AS `from_time`,
+                `tabTimesheet Detail`.`to_time` AS `to_time`
     FROM `tabTimesheet Detail`
     LEFT JOIN `tabTimesheet` ON `tabTimesheet Detail`.`parent` = `tabTimesheet`.`name`
     LEFT JOIN `tabTask` ON `tabTimesheet Detail`.`task` = `tabTask`.`name`
@@ -68,6 +68,7 @@ def get_data(project=None, start_date=None, end_date=None):
     last_project = False
     last_sum_hours = 0
     last_sum_billing_hours = 0
+    loop = 1
     
     for project in _data:
         if last_project:
@@ -82,8 +83,8 @@ def get_data(project=None, start_date=None, end_date=None):
                 last_sum_hours = sum_hours
                 last_sum_billing_hours = sum_billing_hours
                 sum_row = {
-                    'hours': sum_hours,
-                    'billing_hours': sum_billing_hours
+                    'hours': round(sum_hours,2),
+                    'billing_hours': round(sum_billing_hours,2)
                 }
                 data.append(sum_row)
                 # reset vars
@@ -91,18 +92,21 @@ def get_data(project=None, start_date=None, end_date=None):
                 sum_hours = project.hours
                 sum_billing_hours = project.billing_hours
                 data.append(project)
+                loop += 1
         else:
             # first project
             last_project = project.project
             sum_hours += project.hours
             sum_billing_hours += project.billing_hours
             data.append(project)
+            loop += 1
     # last sum row
     sum_row = {
         'hours': last_sum_hours,
         'billing_hours': last_sum_billing_hours
     }
     data.append(sum_row)
+    
     
     return data
     
