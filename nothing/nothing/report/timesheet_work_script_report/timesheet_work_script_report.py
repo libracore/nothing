@@ -68,13 +68,17 @@ def get_data(project=None, start_date=None, end_date=None):
     last_project = False
     last_sum_hours = 0
     last_sum_billing_hours = 0
+    total_sum_hours = 0
+    total_sum_billing_hours = 0
     
     for project in _data:
         if last_project:
             if last_project == project.project:
                 #same project
                 sum_hours += project.hours
+                total_sum_hours += project.hours
                 sum_billing_hours += project.billing_hours
+                total_sum_billing_hours +=project.billing_hours
                 data.append(project)
             else:
                 # new project
@@ -89,18 +93,28 @@ def get_data(project=None, start_date=None, end_date=None):
                 # reset vars
                 last_project = project.project
                 sum_hours = project.hours
+                total_sum_hours += project.hours
                 sum_billing_hours = project.billing_hours
+                total_sum_billing_hours += project.billing_hours
                 data.append(project)
         else:
             # first project
             last_project = project.project
             sum_hours += project.hours
+            total_sum_hours += project.hours
             sum_billing_hours += project.billing_hours
+            total_sum_billing_hours += project.billing_hours
             data.append(project)
     # last sum row
     sum_row = {
-        'hours': last_sum_hours,
-        'billing_hours': last_sum_billing_hours
+        'hours': sum_hours,
+        'billing_hours': sum_billing_hours
+    }
+    data.append(sum_row)
+    # total sum row
+    sum_row = {
+        'hours': total_sum_hours,
+        'billing_hours': total_sum_billing_hours
     }
     data.append(sum_row)
     
