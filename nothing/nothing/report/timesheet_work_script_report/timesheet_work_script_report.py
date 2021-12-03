@@ -87,8 +87,8 @@ def get_data(project=None, start_date=None, end_date=None):
                 last_sum_hours = sum_hours
                 last_sum_billing_hours = sum_billing_hours
                 sum_row = {
-                    'hours': sum_hours,
-                    'billing_hours': sum_billing_hours
+                    'hours': round(sum_hours,2),
+                    'billing_hours': round(sum_billing_hours,2)
                 }
                 data.append(sum_row)
                 # reset vars
@@ -108,14 +108,14 @@ def get_data(project=None, start_date=None, end_date=None):
             data.append(project)
     # last sum row
     sum_row = {
-        'hours': sum_hours,
-        'billing_hours': sum_billing_hours
+        'hours': round(sum_hours, 1),
+        'billing_hours': round(sum_billing_hours,1)
     }
     data.append(sum_row)
     # total sum row
     sum_row = {
-        'hours': total_sum_hours,
-        'billing_hours': total_sum_billing_hours
+        'hours': round(total_sum_hours,1),
+        'billing_hours': round(total_sum_billing_hours,1)
     }
     data.append(sum_row)
     

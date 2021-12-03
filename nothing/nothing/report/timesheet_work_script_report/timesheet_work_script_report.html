@@ -5,7 +5,7 @@
         <td><h1>Timesheet Work Script Report {%= filters.project %} {%= filters.from_time %} {% filters.to_time %}</h1></td>
     </tr>
 </table>
-{% var total_hours = 0 %}
+
 
 <table style="width: 100%; font-size: 9px; border-top: 1px solid black; ">
     <tr>
@@ -22,7 +22,6 @@
         <th style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;" >{%= __("h worked") %}</th>
     </tr>
     {% for (var i=0, l=data.length-1; i<l; i++) { %}
-	{% if (!data[i].employee) {total_hours += data[i].hours;} %}
     <tr style="border-bottom: 1px solid silver;">
         <td style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;">{%= data[i].project %}</td>
         <td style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;">{%= data[i].employee_name %}</td>
@@ -36,11 +35,6 @@
         <td style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;">{%= data[i].billing_hours %}</td>
         <td style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;">{%= data[i].hours %}</td>
     </tr>{% } %}
-    <tr>
-		<td colspan=9 style="text-align: center;">{%= __("Gesamttotal") %}</td>
-		<td style="text-align: right;">{%= total_hours %}</td>
-		<td></td>
-    </tr>
 </table>
 
 
