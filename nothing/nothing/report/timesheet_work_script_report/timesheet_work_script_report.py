@@ -51,6 +51,7 @@ def get_data(project=None, start_date=None, end_date=None):
                 `tabTask`.`subject` AS `subject`,
                 `tabTimesheet Detail`.`ts_description` AS `ts_description`,
                 `tabTimesheet Detail`.`from_time` AS `from_time`,
+                `tabTimesheet Detail`.`to_time` AS `to_time`,
                 `tabTimesheet`.`name` AS `name`,
                 `tabTimesheet`.`start_date` AS `start_date`,
                 `tabTimesheet`.`end_date` AS `end_date`
@@ -58,65 +59,9 @@ def get_data(project=None, start_date=None, end_date=None):
     LEFT JOIN `tabTimesheet` ON `tabTimesheet Detail`.`parent` = `tabTimesheet`.`name`
     LEFT JOIN `tabTask` ON `tabTimesheet Detail`.`task` = `tabTask`.`name`
     WHERE `tabTimesheet Detail`.`project` {project} AND `tabTimesheet`.`docstatus` < 2{additional_conditions}
-    ORDER BY `tabTimesheet Detail`.`project` ASC
+    ORDER BY `tabTimesheet Detail`.`project`, `tabTimesheet Detail`.`from_time` ASC
     """.format(project=project, additional_conditions=additional_conditions)
     
-    _data = frappe.db.sql(sql_query, as_dict = True)
-    
-    data = []
-    sum_hours = 0
-    sum_billing_hours = 0
-    last_project = False
-    last_sum_hours = 0
-    last_sum_billing_hours = 0
-    total_sum_hours = 0
-    total_sum_billing_hours = 0
-    
-    for project in _data:
-        if last_project:
-            if last_project == project.project:
-                #same project
-                sum_hours += project.hours
-                total_sum_hours += project.hours
-                sum_billing_hours += project.billing_hours
-                total_sum_billing_hours +=project.billing_hours
-                data.append(project)
-            else:
-                # new project
-                # create sum_row and save values for last project-row
-                last_sum_hours = sum_hours
-                last_sum_billing_hours = sum_billing_hours
-                sum_row = {
-                    'hours': round(sum_hours,2),
-                    'billing_hours': round(sum_billing_hours,2)
-                }
-                data.append(sum_row)
-                # reset vars
-                last_project = project.project
-                sum_hours = project.hours
-                total_sum_hours += project.hours
-                sum_billing_hours = project.billing_hours
-                total_sum_billing_hours += project.billing_hours
-                data.append(project)
-        else:
-            # first project
-            last_project = project.project
-            sum_hours += project.hours
-            total_sum_hours += project.hours
-            sum_billing_hours += project.billing_hours
-            total_sum_billing_hours += project.billing_hours
-            data.append(project)
-    # last sum row
-    sum_row = {
-        'hours': round(sum_hours, 1),
-        'billing_hours': round(sum_billing_hours,1)
-    }
-    data.append(sum_row)
-    # total sum row
-    sum_row = {
-        'hours': round(total_sum_hours,1),
-        'billing_hours': round(total_sum_billing_hours,1)
-    }
-    data.append(sum_row)
-    
+    data = frappe.db.sql(sql_query, as_dict = True)
+
     return data

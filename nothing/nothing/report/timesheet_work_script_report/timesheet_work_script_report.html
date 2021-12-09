@@ -2,7 +2,7 @@
   
 <table style="width: 100%;">
     <tr>
-        <td><h1>Timesheet Work Script Report {%= filters.project %} {%= filters.from_time %} {% filters.to_time %}</h1></td>
+        <td><h1>Timesheet Work Script Report | {%= filters.project %}  {%= filters.start_date %} - {%= filters.end_date %}</h1></td>
     </tr>
 </table>
 
@@ -11,27 +11,27 @@
     <tr>
         <th style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: center;" >{%= __("Project") %}</th>
         <th style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: center;" >{%= __("Employee") %}</th>
-        <th style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;" >{%= __("Activity Type") %}</th>
-        <th style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;" >{%= __("Task Link") %}</th>
-        <th style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;" >{%= __("Task Name") %}</th>
-        <th style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;" >{%= __("Task Description") %}</th>
-        <th style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;" >{%= __("TS Entry From") %}</th>
-        <th style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;" >{%= __("TS Entry To") %}</th>
-        <th style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;" >{%= __("Timesheet") %}</th>
+        <th style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: center;" >{%= __("Activity Type") %}</th>
+        <th style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: center;" >{%= __("Task Link") %}</th>
+        <th style="padding-top: 2px !important; padding-bottom: 2px !important; " >{%= __("Task Name") %}</th>
+        <th style="padding-top: 2px !important; padding-bottom: 2px !important; " >{%= __("Task Description") %}</th>
+        <th style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: center;" >{%= __("TS Entry From") %}</th>
+        <th style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: center;" >{%= __("TS Entry To") %}</th>
+        <th style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: center;" >{%= __("Timesheet") %}</th>
         <th style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;" >{%= __("h billable") %}</th>        
         <th style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;" >{%= __("h worked") %}</th>
     </tr>
     {% for (var i=0, l=data.length-1; i<l; i++) { %}
     <tr style="border-bottom: 1px solid silver;">
-        <td style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;">{%= data[i].project %}</td>
-        <td style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;">{%= data[i].employee_name %}</td>
-        <td style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;">{%= data[i].activity_type %}</td>
-        <td style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;">{%= data[i].task %}</td>
-        <td style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;">{%= data[i].subject %}</td>
-        <td style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;">{%= data[i].ts_description %}</td>
-        <td style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;">{%= data[i].from_time %}</td>
-        <td style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;">{%= data[i].to_time %}</td>
-        <td style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;">{%= data[i].name %}</td>
+        <td style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: center;">{%= data[i].project %}</td>
+        <td style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: center;">{%= data[i].employee_name %}</td>
+        <td style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: center;">{%= data[i].activity_type %}</td>
+        <td style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: center;">{%= data[i].task %}</td>
+        <td style="padding-top: 2px !important; padding-bottom: 2px !important; ">{%= data[i].subject %}</td>
+        <td style="padding-top: 2px !important; padding-bottom: 2px !important; ">{%= data[i].ts_description %}</td>
+        <td style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: center;">{%= data[i].from_time %}</td>
+        <td style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: center;">{%= data[i].to_time %}</td>
+        <td style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: center;">{%= data[i].name %}</td>
         <td style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;">{%= data[i].billing_hours %}</td>
         <td style="padding-top: 2px !important; padding-bottom: 2px !important; text-align: right;">{%= data[i].hours %}</td>
     </tr>{% } %}
