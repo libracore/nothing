@@ -12,14 +12,14 @@ frappe.query_reports["Timesheet Work Script Report"] = {
             "width": "60px"
         },
         {
-            "fieldname":"start_date",
+            "fieldname":"from_time",
             "label": __("Start"),
             "fieldtype": "Datetime",
             "default": frappe.datetime.add_months(frappe.datetime.get_today(), -1),
             "width": "60px"
          },
          {
-            "fieldname":"end_date",
+            "fieldname":"to_time",
             "label": __("End"),
             "fieldtype": "Datetime",
             "default": frappe.datetime.get_today(),
