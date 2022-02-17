@@ -356,7 +356,7 @@ def create_holiday_timesheet(doc, method):
         ts.submit()
     else:
         # no holiday list found
-        frappe.log_error( _("No holiday list found when trying to create a leave application timesheet. Please set under ERPNextSwiss > Worktime Settings.")
+        frappe.log_error( _("No holiday list found when trying to create a leave application timesheet. Please set under ERPNextSwiss > Worktime Settings."),
             _("Leave Application Timesheet failed") )
         
 def get_daily_hours(company):
