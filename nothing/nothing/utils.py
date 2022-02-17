@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2021, libracore AG and contributors
+# Copyright (c) 2021-2022, libracore AG and contributors
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
@@ -403,7 +403,8 @@ def create_partial_invoice(so, row):
             'description': item.description,
             'qty': item.qty /100 * row_doc.invoice_portion,
             'sales_order': so.name,
-            'so_detail': item.name
+            'so_detail': item.name,
+            'uom': item.uom
         })
     for t in so.taxes:
         si.append("taxes", {
