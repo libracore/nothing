@@ -66,10 +66,9 @@ def licence_invoice_run(licence=None):
             # pull licence document to update
             licence_doc = frappe.get_doc("Licences", _licence['name'])
             # update expiration_date of licence
-            if licence_doc.billing_intervall == 'monthly':
+            if licence_doc.billing_intervall == 'Monthly':
                 licence_doc.next_billing_date = add_months(licence_doc.next_billing_date, 1)
-                licence_doc.expiration_date = add_months(licence_doc.expiration_date, 1)
-            else:
+            elif licence_doc.billing_intervall == 'Yearly':
                 licence_doc.next_billing_date = add_years(licence_doc.next_billing_date, 1)
                 licence_doc.expiration_date = add_years(licence_doc.expiration_date, 1)
             licence_doc.save()
@@ -114,7 +113,7 @@ def create_licence_invoice(licence_name):
         "doctype": "Sales Invoice",
         "naming_series": settings['naming_series'],
         "customer": licence.customer,
-        'serviceperiod_from_date': add_months(licence.expiration_date, -1) if licence.billing_intervall == 'monthly' else add_years(licence.expiration_date, -1),
+        'serviceperiod_from_date': licence.start_date, #add_months(licence.start_date, -1) if licence.billing_intervall == 'monthly' else add_years(licence.start_date, -1),
         'serviceperiod_to_date': licence.expiration_date,
         'contact_person': licence.cust_contact_person,
         'po_no': licence.cust_po_nr,
