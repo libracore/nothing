@@ -41,11 +41,11 @@
    "label": "Expiration Date"
   },
   {
-   "default": "yearly",
+   "default": "No Interval",
    "fieldname": "billing_intervall",
    "fieldtype": "Select",
    "label": "Billing Intervall",
-   "options": "monthly\nyearly"
+   "options": "No Interval\nMonthly\nYearly"
   },
   {
    "fieldname": "column_break_5",
@@ -161,7 +161,7 @@
    "label": "Discount Description"
   }
  ],
- "modified": "2021-10-25 10:46:41.731733",
+ "modified": "2023-10-02 12:17:02.598471",
  "modified_by": "Administrator",
  "module": "nothing",
  "name": "Licences",
