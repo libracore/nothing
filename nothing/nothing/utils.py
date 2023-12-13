@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.utils.data import nowdate, add_days, add_months, add_years, getdate, add_to_date, get_datetime, get_datetime_str
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 
 @frappe.whitelist()
 def create_task(project, task_type, description, item_name, expected_time='', exp_start_date='', exp_end_date='', completed_by=''):
@@ -88,7 +88,16 @@ def create_licence_invoice(licence_name):
         settings = settings[0]
     else:
         frappe.throw("Configuration missing for licence invoices (see Nothing Settings)")
-    taxes_and_charges = settings['taxes_ch'] if licence.default_currency == 'CHF' else settings['taxes_other']
+
+    start_of_the_year = datetime(2024, 1, 1)
+    if licence.start_date >= start_of_the_year.date():
+        if licence.company == "Peerdom AG":
+            taxes_and_charges = "VAT 8.1% - PRD"
+        elif licence.company == "Nothing AG":
+            taxes_and_charges = "VAT 8.1% - NIN"
+    else:      
+        taxes_and_charges = settings['taxes_ch'] if licence.default_currency == 'CHF' else settings['taxes_other']
+
     income_account = settings['income_account_ch'] if licence.default_currency == 'CHF' else settings['income_account_other']
     
     # collect invoice items from licence
